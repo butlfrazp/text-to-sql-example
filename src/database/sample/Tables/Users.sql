@@ -1,0 +1,9 @@
+CREATE TABLE [dbo].[Users]
+(
+  [Id] INT NOT NULL PRIMARY KEY,
+  [Name] NVARCHAR(50) NOT NULL,
+  [Email] NVARCHAR(50) NOT NULL,
+  [Password] NVARCHAR(50) NOT NULL,
+  [Created] DATETIME NOT NULL,
+  [Updated] DATETIME NOT NULL
+) as NODE

@@ -1,0 +1,5 @@
+langchain
+openai
+python-dotenv
+pyodbc==4.0.39
+pydantic
