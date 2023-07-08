@@ -18,7 +18,11 @@ def main(config: Config):
     print('starting the main function...')
 
     llm = _create_llm(config)
-    db = SQLDatabase.from_uri(config.db_uri)
+    db = SQLDatabase.from_uri(
+        config.db_uri,
+        include_tables=["Restaurant", "Menu", "MenuItem", "Rating"],
+        sample_rows_in_table_info=2
+    )
     db_chain = SQLDatabaseNonExecutingChain.from_llm(llm, db)
 
     query = input("Enter a query in english: ")

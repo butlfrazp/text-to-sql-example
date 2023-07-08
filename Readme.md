@@ -7,6 +7,7 @@ This repository contains the modules and logic to create SQL queries from a sql 
 - [Table of Contents](#table-of-contents)
 - [Getting started](#getting-started)
   - [Creating the SQL Tables](#creating-the-sql-tables)
+  - [Input Prompt](#input-prompt)
   - [Running the program](#running-the-program)
   - [Examples](#examples)
 
@@ -22,6 +23,12 @@ To get started, the SQL tables need to be created to run this project.
 The SQL tables are used as the `main` program will read the tables to construct the queries.
 There are sample scripts under `src/database/sample/Tables` to create different tables.
 Feel free to either get started with these scripts or create your own tables.
+
+### Input Prompt
+
+The input prompt uses the default prompts from langchain for sql databases.
+Examples of these prompts can be found [here](https://github.com/hwchase17/langchain/blob/master/langchain/chains/sql_database/prompt.py).
+With the prompt, the table information and samples are passed to the prompt as well as question.
 
 ### Running the program
 
@@ -76,38 +83,39 @@ The program will ask for a query in english. Please write the english query in t
   HAVING AVG(Ra.[Stars]) > 3
   ```
 
-- Get the lunch menu items from the highest rated lunch restuarant
+- Select the lunch menu items of the restaurant that has the highest average stars and the restaurant should have a lunch menu
 
   ```sql
-  SELECT TOP 5 [MenuItem].[Name], [MenuItem].[Price]
+  SELECT TOP 5 [MenuItem].[Id], [MenuItem].[MenuId], [MenuItem].[Name], [MenuItem].[Price]
   FROM [MenuItem]
   JOIN [Menu] ON [MenuItem].[MenuId] = [Menu].[Id]
   JOIN [Restaurant] ON [Menu].[RestaurantId] = [Restaurant].[Id]
-  WHERE [Menu].[MenuType] = 'Lunch' 
-  AND [Restaurant].[Id] IN (
+  WHERE [Menu].[MenuType] = 'Lunch'
+  AND [Restaurant].[Id] = (
       SELECT TOP 1 [Restaurant].[Id]
       FROM [Restaurant]
+      JOIN [Menu] ON [Restaurant].[Id] = [Menu].[RestaurantId]
       JOIN [Rating] ON [Restaurant].[Id] = [Rating].[RestaurantId]
       WHERE [Menu].[MenuType] = 'Lunch'
-      ORDER BY [Rating].[Stars] DESC
+      GROUP BY [Restaurant].[Id]
+      ORDER BY AVG([Rating].[Stars]) DESC
   )
   ```
 
-  **NOTE:** The query above is incorrect.
-
-- Get the dinner menu items of the restaurant that has the highest average rating
+- Select the dinner menu items of the restaurant that has the highest average stars
 
   ```sql
-  SELECT TOP 5 M.[Name], M.[Price]
-  FROM [MenuItem] M
-  JOIN [Menu] MN ON M.[MenuId] = MN.[Id]
-  JOIN [Restaurant] R ON MN.[RestaurantId] = R.[Id]
-  JOIN (SELECT [RestaurantId], AVG([Stars]) AS AvgRating
-        FROM [Rating]
-        GROUP BY [RestaurantId]
-        ORDER BY AvgRating DESC) RA ON R.[Id] = RA.[RestaurantId]
-  WHERE MN.[MenuType] = 'Dinner'
-  ORDER BY RA.[AvgRating] DESC
+  SELECT TOP 5 [MenuItem].[Id], [MenuItem].[MenuId], [MenuItem].[Name], [MenuItem].[Price]
+  FROM [MenuItem]
+  JOIN [Menu] ON [MenuItem].[MenuId] = [Menu].[Id]
+  JOIN [Restaurant] ON [Menu].[RestaurantId] = [Restaurant].[Id]
+  WHERE [Menu].[MenuType] = 'Dinner'
+  AND [Restaurant].[Id] = (
+      SELECT TOP 1 [Restaurant].[Id]
+      FROM [Restaurant]
+      JOIN [Rating] ON [Restaurant].[Id] = [Rating].[RestaurantId]
+      GROUP BY [Restaurant].[Id]
+      ORDER BY AVG([Rating].[Stars]) DESC
+  )
+  ORDER BY [MenuItem].[Id] ASC
   ```
-
-  **NOTE:** The query above is incorrect.
