@@ -1,0 +1,6 @@
+CREATE TABLE [dbo].[MenuItem](
+  [Id] INT NOT NULL PRIMARY KEY,
+  [MenuId] INT FOREIGN KEY REFERENCES [dbo].[Menu](Id) NOT NULL,
+  [Name] NVARCHAR(255) NOT NULL,
+  [Price] INT NOT NULL
+)

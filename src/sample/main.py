@@ -1,6 +1,6 @@
 from config import config, Config
 from langchain.llms import AzureOpenAI
-from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain import SQLDatabase
 from chains.sql_database_non_execution_chain import SQLDatabaseNonExecutingChain
 
@@ -10,7 +10,7 @@ def _create_llm(config: Config):
     if config.is_azure_openai_api:
         llm = AzureOpenAI(deployment_name="chatgpt", model_name="gpt-35-turbo")
     else:
-        llm = OpenAI(model="gpt-35-turbo")
+        llm = ChatOpenAI(model="gpt-3.5-turbo")
     return llm
 
 

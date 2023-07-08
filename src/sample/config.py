@@ -25,18 +25,19 @@ class Config(object):
         if openai_api_key is None:
             raise ValueError("OPENAI_API_KEY is not set")
 
-        if openai_api_base is None:
-            raise ValueError("OPENAI_API_BASE is not set")
-
-        if openai_api_version is None:
-            raise ValueError("OPENAI_API_VERSION is not set")
-
         self._openai_api_type = openai_api_type
         self._db_uri = db_uri
 
+        # validate the azure openai api config
+        if self.is_azure_openai_api and openai_api_base is None:
+            raise ValueError("OPENAI_API_BASE is not set")
+
+        if self.is_azure_openai_api and openai_api_version is None:
+            raise ValueError("OPENAI_API_VERSION is not set")
+
     @property
     def is_azure_openai_api(self) -> bool:
-        return self._openai_api_type == "azure"
+        return self._openai_api_type.lower() == "azure"
 
     @property
     def db_uri(self) -> str:
