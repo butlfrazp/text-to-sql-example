@@ -93,6 +93,8 @@ The program will ask for a query in english. Please write the english query in t
   )
   ```
 
+  **NOTE:** The query above is incorrect.
+
 - Get the dinner menu items of the restaurant that has the highest average rating
 
   ```sql
